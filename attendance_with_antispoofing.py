@@ -91,9 +91,9 @@ def login():
                         bg_photo = PhotoImage(file = "Photos/background3.png", master = first)
                         background_pic = Label(first, image = bg_photo)
                         background_pic.pack()
-                        first.title("Manage Employee post")
+                        first.title("Manage Student post")
                         print("Hi Chhabi lal tamang")
-                        face = Label(first, text = "Management of Employee" , bg = "green" , fg = "yellow", padx = 15, pady = 15, font = ("Times New Roman", 20, "bold") ,borderwidth = 5, relief = RIDGE).place(x = 500, y = 10)
+                        face = Label(first, text = "Management of Student" , bg = "green" , fg = "yellow", padx = 15, pady = 15, font = ("Times New Roman", 20, "bold") ,borderwidth = 5, relief = RIDGE).place(x = 500, y = 10)
                         main = Label(first, bg = "gray", borderwidth = 1).pack()
                         def back():
                             first.destroy() 
@@ -363,10 +363,10 @@ def login():
                                                 
                     ################################################## Employee Management form ###############################
                         f2 = Frame(first, bg = "gray",borderwidth = "3", relief = SUNKEN, height = 600, width = 420)
-                        titles = Label(f2, text = "Manage Employee" ,bg = "gray", font = ("Italic", 20, "bold")).place(x = 90, y = 30)
-                        id = Label(f2, text = "Employee ID", bg = "gray", font = ("italic",13, "bold")).place(x = 35, y = 100 )
+                        titles = Label(f2, text = "Manage Student" ,bg = "gray", font = ("Italic", 20, "bold")).place(x = 90, y = 30)
+                        id = Label(f2, text = "Student ID", bg = "gray", font = ("italic",13, "bold")).place(x = 35, y = 100 )
                         E1 = Entry(f2,state="disabled", width = 20, textvariable = eid_var,  font = ("italic",13, "bold") ).place(x = 180  , y = 100)
-                        post = Label(f2, text = "Post", bg = "gray",  font = ("italic",13, "bold")).place(x = 35, y = 150 )
+                        post = Label(f2, text = "class", bg = "gray",  font = ("italic",13, "bold")).place(x = 35, y = 150 )
                         E2 = Entry(f2, width = 20, textvariable = post_var,  font = ("italic",13, "bold")).place(x =180, y = 150)
                         name = Label(f2, text = "Full Name", bg = "gray", font = ("italic",13, "bold")).place(x =35, y = 200)
                         E3 = Entry(f2, width = 20, textvariable = fname_var , font = ("italic",12, "bold")).place(x = 180, y = 200)
@@ -405,8 +405,8 @@ def login():
                         scroll_y.pack(side = RIGHT, fill = Y)
                         scroll_x.config(command = table1.xview)
                         scroll_y.config(command = table1.yview)
-                        table1.heading("eid", text ="Employee ID")
-                        table1.heading('post', text = "Post")
+                        table1.heading("eid", text ="Student ID")
+                        table1.heading('post', text = "Class")
                         table1.heading("fname", text= "Full Name")
                         table1.heading("gender",text = "Gender")
                         table1.heading("contact.no", text = "Contact_No")
@@ -941,7 +941,7 @@ def login():
                 # faceslidercolor()
 
                 photo1 = PhotoImage(file = "Photos/management.png", master = attendance)
-                B1 = Button(attendance, image = photo1, text = "Employee Management",font = ("Times New Roman" , 15), fg = "green", height =230, width = 265, command = manage_employee, compound = BOTTOM )
+                B1 = Button(attendance, image = photo1, text = "Student Management",font = ("Times New Roman" , 15), fg = "green", height =230, width = 265, command = manage_employee, compound = BOTTOM )
                 B1.place(x = 20, y = 100)
 
                 photo2 = PhotoImage(file = "Photos/face_recognizer.png",  master = attendance)
