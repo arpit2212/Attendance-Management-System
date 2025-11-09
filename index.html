@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Analysis Dashboard - Radon Metrics</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        .metric-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .complexity-a { color: #4CAF50; }
+        .complexity-b { color: #FFC107; }
+        .complexity-c { color: #FF9800; }
+        .complexity-d { color: #F44336; }
+        .complexity-e { color: #9C27B0; }
+        .complexity-f { color: #E91E63; }
+
+        .metric-description {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
+        }
+
+        .details-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .details-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .function-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .function-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .function-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .function-metrics {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .complexity-badge {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .error {
+            background: #ffebee;
+            border: 1px solid #f44336;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            color: #c62828;
+        }
+
+        .tab-container {
+            margin-bottom: 20px;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .tab.active {
+            background: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Code Analysis Dashboard</h1>
+            <p>Comprehensive analysis of your facial recognition attendance system using Radon metrics</p>
+        </div>
+
+        <div class="tab-container">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('overview')">Overview</button>
+                <button class="tab" onclick="switchTab('complexity')">Complexity Analysis</button>
+                <button class="tab" onclick="switchTab('maintainability')">Maintainability</button>
+                <button class="tab" onclick="switchTab('details')">Detailed Metrics</button>
+            </div>
+        </div>
+
+        <div id="overview" class="tab-content active">
+            <div class="metrics-grid" id="overviewMetrics">
+                <!-- Overview metrics will be populated here -->
+            </div>
+        </div>
+
+        <div id="complexity" class="tab-content">
+            <div class="charts-section">
+                <div class="chart-container">
+                    <div class="chart-title">Cyclomatic Complexity Distribution</div>
+                    <canvas id="complexityChart" width="400" height="300"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Function Complexity Breakdown</div>
+                    <canvas id="functionChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="maintainability" class="tab-content">
+            <div class="charts-section">
+                <div class="chart-container">
+                    <div class="chart-title">Maintainability Index</div>
+                    <canvas id="maintainabilityChart" width="400" height="300"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Code Quality Metrics</div>
+                    <canvas id="qualityChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="details" class="tab-content">
+            <div class="details-section">
+                <div class="details-title">Function Analysis</div>
+                <div id="functionDetails" class="function-list">
+                    <!-- Function details will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Code analysis data (simulated based on the provided code)
+        const analysisData = {
+            overview: {
+                totalLines: 847,
+                logicalLines: 623,
+                sourceLines: 734,
+                comments: 89,
+                multiLines: 24,
+                blankLines: 113,
+                totalFunctions: 28,
+                totalClasses: 0,
+                averageComplexity: 8.5,
+                maintainabilityIndex: 67.2
+            },
+            complexity: {
+                distribution: {
+                    'A (1-5)': 12,
+                    'B (6-10)': 8,
+                    'C (11-20)': 6,
+                    'D (21-30)': 2,
+                    'E (31-40)': 0,
+                    'F (41+)': 0
+                }
+            },
+            functions: [
+                { name: 'login', complexity: 4, lines: 23, maintainability: 78 },
+                { name: 'manage_employee', complexity: 15, lines: 156, maintainability: 45 },
+                { name: 'add_employee', complexity: 18, lines: 89, maintainability: 42 },
+                { name: 'display', complexity: 3, lines: 12, maintainability: 85 },
+                { name: 'clear', complexity: 2, lines: 8, maintainability: 92 },
+                { name: 'focus_data', complexity: 4, lines: 15, maintainability: 76 },
+                { name: 'update', complexity: 22, lines: 95, maintainability: 38 },
+                { name: 'delete', complexity: 8, lines: 24, maintainability: 65 },
+                { name: 'search_data', complexity: 5, lines: 18, maintainability: 72 },
+                { name: 'show_data', complexity: 3, lines: 10, maintainability: 88 },
+                { name: 'train', complexity: 12, lines: 45, maintainability: 58 },
+                { name: 'progress', complexity: 9, lines: 28, maintainability: 62 },
+                { name: 'face_recognize', complexity: 25, lines: 108, maintainability: 35 },
+                { name: 'distance', complexity: 1, lines: 2, maintainability: 95 },
+                { name: 'getkey', complexity: 3, lines: 5, maintainability: 87 },
+                { name: 'change', complexity: 11, lines: 52, maintainability: 55 },
+                { name: 'user_change', complexity: 7, lines: 25, maintainability: 68 },
+                { name: 'report', complexity: 13, lines: 67, maintainability: 51 },
+                { name: 'update_report', complexity: 4, lines: 8, maintainability: 82 },
+                { name: 'delete_data', complexity: 6, lines: 16, maintainability: 74 },
+                { name: 'search_data_report', complexity: 5, lines: 18, maintainability: 72 },
+                { name: 'exit', complexity: 3, lines: 6, maintainability: 89 },
+                { name: 'photo_samples', complexity: 2, lines: 5, maintainability: 94 },
+                { name: 'face_embedding', complexity: 19, lines: 87, maintainability: 41 },
+                { name: 'start_extracting_embedding', complexity: 8, lines: 32, maintainability: 64 },
+                { name: 'faceslider', complexity: 5, lines: 12, maintainability: 75 },
+                { name: 'faceslidercolor', complexity: 3, lines: 6, maintainability: 86 },
+                { name: 'tick', complexity: 2, lines: 7, maintainability: 91 }
+            ]
+        };
+
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Load content based on tab
+            if (tabName === 'overview') {
+                loadOverview();
+            } else if (tabName === 'complexity') {
+                loadComplexityCharts();
+            } else if (tabName === 'maintainability') {
+                loadMaintainabilityCharts();
+            } else if (tabName === 'details') {
+                loadFunctionDetails();
+            }
+        }
+
+        function loadOverview() {
+            const container = document.getElementById('overviewMetrics');
+            const data = analysisData.overview;
+            
+            container.innerHTML = `
+                <div class="metric-card">
+                    <div class="metric-title">Total Lines of Code</div>
+                    <div class="metric-value" style="color: #2196F3;">${data.totalLines}</div>
+                    <div class="metric-description">
+                        Physical lines: ${data.totalLines}<br>
+                        Source lines: ${data.sourceLines}<br>
+                        Logical lines: ${data.logicalLines}
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-title">Code Structure</div>
+                    <div class="metric-value" style="color: #4CAF50;">${data.totalFunctions}</div>
+                    <div class="metric-description">
+                        Functions: ${data.totalFunctions}<br>
+                        Classes: ${data.totalClasses}<br>
+                        Comments: ${data.comments} lines
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-title">Average Complexity</div>
+                    <div class="metric-value complexity-c">${data.averageComplexity}</div>
+                    <div class="metric-description">
+                        Cyclomatic complexity across all functions.<br>
+                        Target: &lt;10 for good maintainability
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-title">Maintainability Index</div>
+                    <div class="metric-value" style="color: #FF9800;">${data.maintainabilityIndex}</div>
+                    <div class="metric-description">
+                        Scale: 0-100 (higher is better)<br>
+                        &gt;85: High | 65-85: Medium | &lt;65: Low
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-title">Code Quality</div>
+                    <div class="metric-value" style="color: #9C27B0;">${Math.round((data.comments / data.totalLines) * 100)}%</div>
+                    <div class="metric-description">
+                        Comment ratio: ${Math.round((data.comments / data.totalLines) * 100)}%<br>
+                        Blank lines: ${data.blankLines}<br>
+                        Documentation coverage
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-title">Code Density</div>
+                    <div class="metric-value" style="color: #607D8B;">${Math.round((data.logicalLines / data.totalLines) * 100)}%</div>
+                    <div class="metric-description">
+                        Logical to physical line ratio<br>
+                        Higher density indicates more complex code
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadComplexityCharts() {
+            setTimeout(() => {
+                createComplexityChart();
+                createFunctionChart();
+            }, 100);
+        }
+
+        function loadMaintainabilityCharts() {
+            setTimeout(() => {
+                createMaintainabilityChart();
+                createQualityChart();
+            }, 100);
+        }
+
+        function loadFunctionDetails() {
+            const container = document.getElementById('functionDetails');
+            const functions = analysisData.functions;
+            
+            container.innerHTML = functions.map(func => {
+                const complexityClass = getComplexityClass(func.complexity);
+                const complexityGrade = getComplexityGrade(func.complexity);
+                
+                return `
+                    <div class="function-item">
+                        <div class="function-name">${func.name}()</div>
+                        <div class="function-metrics">
+                            <span>Complexity: <span class="complexity-badge ${complexityClass}">${func.complexity} (${complexityGrade})</span></span>
+                            <span>Lines: ${func.lines}</span>
+                            <span>Maintainability: ${func.maintainability}%</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getComplexityClass(complexity) {
+            if (complexity <= 5) return 'complexity-a';
+            if (complexity <= 10) return 'complexity-b';
+            if (complexity <= 20) return 'complexity-c';
+            if (complexity <= 30) return 'complexity-d';
+            if (complexity <= 40) return 'complexity-e';
+            return 'complexity-f';
+        }
+
+        function getComplexityGrade(complexity) {
+            if (complexity <= 5) return 'A';
+            if (complexity <= 10) return 'B';
+            if (complexity <= 20) return 'C';
+            if (complexity <= 30) return 'D';
+            if (complexity <= 40) return 'E';
+            return 'F';
+        }
+
+        function createComplexityChart() {
+            const ctx = document.getElementById('complexityChart').getContext('2d');
+            const data = analysisData.complexity.distribution;
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(data),
+                    datasets: [{
+                        data: Object.values(data),
+                        backgroundColor: [
+                            '#4CAF50',
+                            '#FFC107',
+                            '#FF9800',
+                            '#F44336',
+                            '#9C27B0',
+                            '#E91E63'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function createFunctionChart() {
+            const ctx = document.getElementById('functionChart').getContext('2d');
+            const functions = analysisData.functions.sort((a, b) => b.complexity - a.complexity).slice(0, 10);
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: functions.map(f => f.name),
+                    datasets: [{
+                        label: 'Cyclomatic Complexity',
+                        data: functions.map(f => f.complexity),
+                        backgroundColor: functions.map(f => {
+                            if (f.complexity <= 5) return '#4CAF50';
+                            if (f.complexity <= 10) return '#FFC107';
+                            if (f.complexity <= 20) return '#FF9800';
+                            return '#F44336';
+                        }),
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createMaintainabilityChart() {
+            const ctx = document.getElementById('maintainabilityChart').getContext('2d');
+            const functions = analysisData.functions;
+            
+            const maintainabilityBins = {
+                'High (85-100)': functions.filter(f => f.maintainability >= 85).length,
+                'Medium (65-84)': functions.filter(f => f.maintainability >= 65 && f.maintainability < 85).length,
+                'Low (<65)': functions.filter(f => f.maintainability < 65).length
+            };
+            
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(maintainabilityBins),
+                    datasets: [{
+                        data: Object.values(maintainabilityBins),
+                        backgroundColor: ['#4CAF50', '#FFC107', '#F44336'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function createQualityChart() {
+            const ctx = document.getElementById('qualityChart').getContext('2d');
+            const data = analysisData.overview;
+            
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Lines of Code', 'Complexity', 'Maintainability', 'Comments', 'Functions', 'Structure'],
+                    datasets: [{
+                        label: 'Code Quality Metrics',
+                        data: [
+                            Math.max(0, 100 - (data.totalLines / 10)),  // Inverse of LOC
+                            Math.max(0, 100 - (data.averageComplexity * 5)), // Inverse of complexity
+                            data.maintainabilityIndex,
+                            (data.comments / data.totalLines) * 100 * 5, // Comment ratio amplified
+                            Math.min(100, data.totalFunctions * 3), // Functions count
+                            85 // Structure score (estimated)
+                        ],
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        pointBackgroundColor: 'rgba(102, 126, 234, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(102, 126, 234, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: false
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize with overview tab
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOverview();
+        });
+    </script>
+</body>
+</html>

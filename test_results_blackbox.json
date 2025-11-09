@@ -1,0 +1,41 @@
+{
+  "timestamp": "2025-11-10 02:58:22",
+  "modules": {
+    "extract_embeddings": {
+      "status": "SUCCESS",
+      "functions": 1,
+      "classes": 1,
+      "function_names": [
+        "load_model"
+      ],
+      "class_names": [
+        "Extract_Embeddings"
+      ]
+    },
+    "training": {
+      "status": "SUCCESS",
+      "functions": 0,
+      "classes": 4,
+      "function_names": [],
+      "class_names": [
+        "CalibratedClassifierCV",
+        "LabelEncoder",
+        "LinearSVC",
+        "Training"
+      ]
+    },
+    "mark_attendance": {
+      "status": "SUCCESS",
+      "functions": 0,
+      "classes": 1,
+      "function_names": [],
+      "class_names": [
+        "Mark_Attendance"
+      ]
+    },
+    "event_scheduler": {
+      "status": "ERROR",
+      "error": "No module named 'apscheduler'"
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "timestamp": "2025-11-10 02:55:53",
+  "files": {
+    "attendance_without_antispoofing.py": {
+      "raw": {
+        "loc": 984,
+        "lloc": 843,
+        "sloc": 860,
+        "comments": 46,
+        "multi": 0,
+        "blank": 78
+      },
+      "complexity": {
+        "average": 3.5,
+        "maximum": 6,
+        "functions": 2
+      },
+      "maintainability": 23.99,
+      "halstead": {
+        "volume": 3249.3,
+        "difficulty": 8.97,
+        "effort": 29131.64
+      }
+    },
+    "attendance_with_antispoofing.py": {
+      "raw": {
+        "loc": 1006,
+        "lloc": 861,
+        "sloc": 878,
+        "comments": 47,
+        "multi": 0,
+        "blank": 81
+      },
+      "complexity": {
+        "average": 3.5,
+        "maximum": 6,
+        "functions": 2
+      },
+      "maintainability": 23.69,
+      "halstead": {
+        "volume": 3367.74,
+        "difficulty": 10.29,
+        "effort": 34639.61
+      }
+    },
+    "event_scheduler.py": {
+      "raw": {
+        "loc": 154,
+        "lloc": 127,
+        "sloc": 133,
+        "comments": 2,
+        "multi": 0,
+        "blank": 19
+      },
+      "complexity": {
+        "average": 3.33,
+        "maximum": 7,
+        "functions": 6
+      },
+      "maintainability": 45.23,
+      "halstead": {
+        "volume": 107.03,
+        "difficulty": 3.0,
+        "effort": 321.08
+      }
+    },
+    "extract_embeddings.py": {
+      "raw": {
+        "loc": 98,
+        "lloc": 76,
+        "sloc": 76,
+        "comments": 2,
+        "multi": 0,
+        "blank": 20
+      },
+      "complexity": {
+        "average": 1.78,
+        "maximum": 4,
+        "functions": 9
+      },
+      "maintainability": 53.0,
+      "halstead": {
+        "volume": 87.57,
+        "difficulty": 2.0,
+        "effort": 175.14
+      }
+    },
+    "mark_attendance.py": {
+      "raw": {
+        "loc": 33,
+        "lloc": 20,
+        "sloc": 20,
+        "comments": 5,
+        "multi": 0,
+        "blank": 8
+      },
+      "complexity": {
+        "average": 1.25,
+        "maximum": 2,
+        "functions": 4
+      },
+      "maintainability": 100.0,
+      "halstead": {
+        "volume": 0,
+        "difficulty": 0,
+        "effort": 0
+      }
+    },
+    "training.py": {
+      "raw": {
+        "loc": 37,
+        "lloc": 23,
+        "sloc": 22,
+        "comments": 3,
+        "multi": 3,
+        "blank": 9
+      },
+      "complexity": {
+        "average": 1.25,
+        "maximum": 2,
+        "functions": 4
+      },
+      "maintainability": 100.0,
+      "halstead": {
+        "volume": 0,
+        "difficulty": 0,
+        "effort": 0
+      }
+    }
+  }
+}

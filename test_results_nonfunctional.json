@@ -1,0 +1,37 @@
+{
+  "timestamp": "2025-11-10 02:56:31",
+  "performance": {
+    "read_time": 0.0072,
+    "total_lines": 2312,
+    "file_sizes": {
+      "attendance_without_antispoofing.py": 72545,
+      "attendance_with_antispoofing.py": 73928,
+      "event_scheduler.py": 5780,
+      "extract_embeddings.py": 2857,
+      "mark_attendance.py": 1061,
+      "training.py": 1130
+    }
+  },
+  "security": {
+    "issues_found": 3,
+    "issues": [
+      "attendance_without_antispoofing.py: Potential hardcoded empty password",
+      "attendance_with_antispoofing.py: Potential hardcoded empty password",
+      "event_scheduler.py: Potential hardcoded empty password"
+    ]
+  },
+  "usability": {
+    "attendance_without_antispoofing.py": {
+      "buttons": 30,
+      "entries": 13,
+      "labels": 42,
+      "messageboxes": 47
+    },
+    "attendance_with_antispoofing.py": {
+      "buttons": 30,
+      "entries": 13,
+      "labels": 42,
+      "messageboxes": 48
+    }
+  }
+}
